@@ -1,0 +1,292 @@
+body{
+    background-color: rgb(17, 28, 52);
+    margin: 0%;
+}
+#navbar{
+    position: fixed;
+    width: 100%;
+    height: 6vw;
+    background-color: rgba(8, 11, 19, 0.642);
+    top: 0vw;
+    z-index: 1;
+}
+#contact,#home{
+    position: absolute;
+    text-align: center;
+    padding:0.25vw ;
+    color:white ;
+    font-size: 1.5vw;
+    top: 1.25vw;
+}
+#contact{
+    right: 5vw;
+}
+#home{
+    right: 14vw;
+}
+#contact:hover,#home:hover{
+    color: gold;
+    border-bottom: solid 0.25vw gold;
+}
+#myweb{
+    text-align: left;
+    padding:1vw ;
+    color:white ;
+    font-size: 2vw;
+}
+#welcom{
+    height: 45vw;
+    background-image:url(tower.jpg);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.text{
+    color: white;
+    font-size: 2vw;
+}
+.title{
+    color: white;
+    font-size: 3vw;
+    margin-bottom: 2vw;
+    border-bottom: solid 0.25vw gold;
+    padding: 0.5vw;
+}
+#newshold,#about,#how,#play,form,#welcom,#char{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 4vw;
+}
+#news{
+
+    position: relative;
+    height: 40vw;
+    width: 80vw;
+    background-image:url(news3.png);
+    background-repeat: no-repeat;
+    background-size:cover;
+}
+#insid{
+    color: white;
+    -webkit-text-stroke: 0.06vw black;
+    font-size: 4vw;
+    position: absolute;
+    bottom: 20vw;
+    left: 3vw;
+}
+#circul{
+    position: absolute;
+    bottom: 0vw;
+    left: 34vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cir{
+    background-color: rgb(255, 255, 255);
+    width: 2vw;
+    height: 2vw;
+    border-radius: 50%;
+    margin: 1vw;
+}
+a{
+    text-decoration: none;
+    color: white;
+}
+.photo{
+    margin-top: 2vw;
+    width:36vw;
+    height:20vw;
+    background-color: rgb(0, 0, 0);
+}
+.howto{
+    margin-top: 2vw;
+    height: 20vw;
+    width: 36vw;
+    background-color: grey;
+    box-sizing: border-box;
+    padding: 2vw;
+}
+#howholder,.assetholder1{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+}
+.game{
+    text-align: center;
+    font-size: 2vw;
+    margin: 2vw;
+    height: 6vw;
+    width: 12vw;
+    background-color:rgb(249, 238, 28);
+}
+#play{
+    padding-top:8vw;
+    background-color:black;
+}
+input{
+    margin: 1vw;
+    margin-bottom:3vw ;
+    height: 3vw;
+    width: 15vw;
+}
+.playnow{
+    text-align: center;
+    line-height:  5vw;
+    background-color: rgba(255, 0, 0, 0.503);
+    border-radius: 10%;
+    color: white;
+    border: none;
+    font-size: 1.5vw;
+    height: 6vw;
+    width: 15vw;
+}
+.playnow:hover
+{
+    background-color: rgba(255, 217, 0, 0.705);
+}
+
+.gamee{
+    text-align: center;
+    font-size: 2vw;
+    margin: 1vw;
+    height: 18vw;
+    width: 30vw;
+    position: relative;
+}
+#games{
+    width: 16vw;
+    margin-bottom: 3vw;
+    text-align: center;
+    color: white;
+    font-size: 2vw;
+    border-bottom: solid 0.5vw gold;
+}
+.holder{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content:center;
+
+}
+.map{
+    position: absolute;
+    width:8vw;
+    height: 2vw;
+    font-size: 1.5wv;
+    padding: 1vw;
+    background-color: gold;
+    color:white;
+    top: 15.5vw;
+    left:11vw ;
+}
+
+#mp1{
+    background-image:url(map.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+#mp2{
+    background-image:url(map2.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+#mp3{
+    background-image:url(map3.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+#mp4{
+    background-image:url(map4.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.para{
+    width: 70vw;
+    text-align: center;
+}
+.grid{
+    margin: 2vw;
+    background-color:rgba(30, 46, 81, 0.642);
+    width: 34vw;
+    height: 19vw;
+    position: relative;
+}
+.photoass{
+    position: absolute;
+    width:23.5vw;
+    height:19vw;
+    left: 0vw;
+}
+.photoass1{
+    position: absolute;
+    width:17vw;
+    height:19vw;
+    left: 2vw;
+}
+.info{
+    color: white;
+    font-size: 2vw;
+    position: absolute;
+    left: 24vw;
+    padding-left: 1vw;
+    padding-top: 4vw;
+}
+.info1{
+    color: white;
+    font-size: 2vw;
+    position: absolute;
+    left: 20vw;
+    padding-left: 1vw;
+    padding-top: 4vw;
+}
+.assetholder1{
+    grid-gap: 6vw;
+}
+.ph1{
+    background-image:url(WALK_001.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.ph2{
+    background-image:url(WALK1_001.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.ph3{
+    background-image:url(WALK2_001.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.ph4{
+    background-image:url(towers.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.ph5{
+    background-image:url(towers2.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.ph6{
+    background-image:url(towers3.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.ph7{
+    background-image:url(towers4.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.p1{
+    background-image:url(wave.gif);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.p2{
+    background-image:url(puttower.gif);
+    background-repeat: no-repeat;
+    background-size: contain;
+}

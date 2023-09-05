@@ -1,0 +1,51 @@
+body{
+    margin: 0%;
+}
+#parent{
+    display: inline-block;
+    position: relative;
+}
+#blood{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    font-size: 40px;
+    color: white;
+}
+#coin{
+    position: absolute;
+    right: 90px;
+    top: 5px;
+    font-size: 40px;
+    color: white;
+}
+#iconc{
+    position: absolute;
+    right: 145px;
+    top: 5px;
+    font-size: 30px;
+}
+#iconh{
+    position: absolute;
+    right: 40px;
+    top: 5px;
+    font-size: 30px;
+}
+#wave{
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    background-color:blue;
+    width: 100px;
+    height: 50px;
+    color: white;
+    font-size: medium;
+    text-align: center;
+}
+#score{
+    position: absolute;
+    left: 700px;
+    top: 5px;
+    font-size: 40px;
+    color: white;
+}

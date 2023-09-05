@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bil.css">
+    <title>project</title>
+</head>
+<body>
+    <div id="navbar">
+        <div id="myweb">my web</div>
+        <a id="contact" href="contact.html">Contact me</a>
+        <a id="home" href="index.html">Home</a>
+    </div>
+    <div id="welcom">
+        <a class="playnow" href="#play">play now</a>
+    </div>
+    <div id="about">
+        <div class="title">about the game</div>
+        <p class="text para">This is a classic Biliard game made with javascript, its a eight ball or "stripes and solids" game.for more detail whatch the video down below or scrol to "how to play".</p>
+        <video  controls>
+            <source src="vidbil.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div id="how">
+        <div class="title ">how to play</div>
+        <div id="howholder">
+            <div class="text howto">in the first shoot the player can replace the white ball behind the white line by clicking on the ball then mouve to the disier place and click to put it.</div>
+            <div class="photo p1"></div>
+            <div class="photo p2"></div>
+            <div class="text howto">a fole happen if the white ball enter a hol or the white ball touch a diffrent ball at first. when that happen you can replace the white ball by clicking on the ball then mouve to the disier place and click to put it.</div>
+            <div class="text howto">to aim you should click on left button of mouse and hover wile you holdingthe button down or by the left and right arrow key. and to stop aiming you have to stop holding the left button </div>
+            <div class="photo p3"></div>
+            <div class="photo p4"></div>
+            <div class="text howto">to shoot you have to click on the stick on the left and draget down and releas it to shoot</div>
+        </div>
+    </div>
+    <div id="play">
+        <div class="title">play</div>
+        <form action="biliardgame.html">
+            <div class="text">player one name</div>
+            <input title="one" type="text" id="one" name="one" maxlength="15" minlength="3">
+            <div class="text">player two name</div>
+            <input title="two" type="text" id="two" name="two" maxlength="15" minlength="3">
+            <input type="submit" value="play now" class="playnow" id="submit">
+        </form>
+    </div>
+    <script src="bil.js"></script>
+</body>
+</html>

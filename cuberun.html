@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0vw;
+            background-color: aquamarine;
+        }
+
+        #score {
+            position: absolute;
+            top: 0vw;
+            left: 47vw;
+            height: 4vw;
+            width: 6vw;
+            padding-left: 1.5vw;
+            color: beige;
+            font-size: 3vw;
+        }
+    </style>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="score"></div>
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.156.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.156.0/examples/jsm/"
+                }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+        const renderer = new THREE.WebGLRenderer({
+            alpha: true,
+            antialias: true
+        });
+
+        renderer.setSize(window.innerWidth - 1, window.innerHeight - 1);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000,
+        );
+        camera.position.set(0.01, -3, 1.8)
+        const orbit = new OrbitControls(camera, renderer.domElement);
+
+        orbit.update();
+        var canjump = true;
+        var keys = {
+            a: { ispres: false },
+            d: { ispres: false },
+            w: { ispres: false },
+            s: { ispres: false }
+        }
+        window.addEventListener('keydown', (event) => {
+            switch (event.keyCode) {
+                case 37:
+                    keys.d.ispres = true;
+                    break;
+
+                case 39:
+                    keys.a.ispres = true;
+                    break;
+
+                case 38:
+                    keys.s.ispres = true;
+                    break;
+                case 40:
+                    keys.w.ispres = true;
+                    break;
+                case 32:
+                    if (canjump == true) {
+                        cube.vz = 0.2;
+                        canjump = false;
+                    }
+                    break;
+
+            }
+        });
+
+        window.addEventListener('keyup', (event) => {
+            switch (event.keyCode) {
+                case 37:
+                    keys.d.ispres = false;
+                    break;
+
+                case 39:
+                    keys.a.ispres = false;
+                    break;
+
+                case 38:
+                    keys.s.ispres = false;
+                    break;
+                case 40:
+                    keys.w.ispres = false;
+                    break;
+
+            }
+        });
+        var score = document.getElementById('score')
+
+        class box extends THREE.Mesh {
+            constructor(width, depth, hight, color, { x, y, z }, { vx, vy, vz }, isenamy) {
+                super(
+                    new THREE.BoxGeometry(width, depth, hight),
+                    new THREE.MeshStandardMaterial({ color: color })
+                )
+                this.hight = hight;
+                this.width = width;
+                this.depth = depth;
+                this.position.set(x, y, z);
+                this.vx = vx;
+                this.vy = vy;
+                this.vz = vz;
+                this.buttom = this.position.z - (this.hight / 2);
+                this.top = this.position.z + (this.hight / 2);
+                this.left = this.position.x - (this.width / 2);
+                this.right = this.position.x + (this.width / 2);
+                this.front = this.position.y + (this.depth / 2);
+                this.back = this.position.y - (this.depth / 2);
+                this.isenamy = isenamy;
+            }
+            setside() {
+                this.buttom = this.position.z - (this.hight / 2);
+                this.top = this.position.z + (this.hight / 2);
+
+                this.left = this.position.x - (this.width / 2);
+                this.right = this.position.x + (this.width / 2);
+
+                this.front = this.position.y + (this.depth / 2);
+                this.back = this.position.y - (this.depth / 2);
+            }
+            update(plan) {
+                this.setside();
+
+                this.position.x += this.vx;
+                this.position.y += this.vy;
+
+                this.vz += -0.01;
+                if (detectcolision(this, plan)) {
+                    this.vz *= 0.3;
+                    this.vz *= -1;
+                    canjump = true;
+                } else {
+                    this.position.z += this.vz;
+                }
+                if (this.isenamy) {
+                    this.vy -= 0.01;
+                }
+            }
+        }
+
+        function detectcolision(box1, box2) {
+            const xcol = box1.right >= box2.left && box1.left <= box2.right;
+            const ycol = box1.front >= box2.back && box1.back <= box2.front;
+            const zcol = box1.top >= box2.buttom && box1.buttom + box1.vz <= box2.top;
+            return xcol && ycol && zcol;
+        }
+
+        function detectfall(box1, box2) {
+            const xcol = box1.right >= box2.left && box1.left <= box2.right;
+            const ycol = box1.front >= box2.back && box1.back <= box2.front;
+            return xcol && ycol;
+        }
+
+        const cube = new box(1, 1, 1, 0x00ff00, { x: 0, y: 0, z: 2 }, { vx: 0, vy: 0, vz: -0.05 }, false);
+        cube.castShadow = true;
+        scene.add(cube);
+
+        const plan = new box(10, 103, 0.1, 0x0000ff, { x: 0, y: 49, z: 0 }, { vx: 0, vy: 0, vz: 0 }, false);
+        plan.receiveShadow = true;
+        scene.add(plan);
+
+        const light = new THREE.AmbientLight(0xFFFFFF, 0.8);
+        scene.add(light);
+
+        const dirlight = new THREE.DirectionalLight(0xFFFFFF, 1);
+        dirlight.position.set(0, -2, 5);
+        dirlight.castShadow = true;
+        scene.add(dirlight);
+
+
+        const enamys = [];
+        var fram = 0;
+        var rate = 70;
+
+
+        function animate() {
+            renderer.render(scene, camera);
+            if (fram % rate == 0) {
+                if (rate > 10) {
+                    rate -= 1;
+                }
+                const enamy = new box(1, 1, 1, 0xff0000, { x: random(-5, 5), y: random(30, 95), z: 2 }, { vx: 0, vy: 0, vz: 0 }, true);
+                enamy.castShadow = true;
+                scene.add(enamy);
+                enamys.push(enamy);
+            }
+            cube.vx = 0;
+            if (keys.d.ispres == true) {
+                cube.vx = -0.05;
+            } else if (keys.a.ispres == true) {
+                cube.vx = +0.05;
+            }
+            cube.vy = 0;
+            if (keys.w.ispres == true) {
+                cube.vy = -0.05;
+            } else if (keys.s.ispres == true) {
+                cube.vy = +0.05;
+            }
+            cube.update(plan);
+            for (let i = 0; i < enamys.length; i++) {
+                enamys[i].update(plan);
+                if (detectcolision(cube, enamys[i])) {
+                    gameover();
+                }
+            }
+            if (!detectfall(cube, plan)) {
+                gameover();
+            }
+            score.innerHTML = fram;
+
+            fram++;
+        }
+        renderer.setAnimationLoop(animate);
+
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function gameover() {
+            const url = 'winrun.html';
+            window.location.href = `${url}?score=${fram}`;
+        }
+    </script>
+</body>
+
+</html>
