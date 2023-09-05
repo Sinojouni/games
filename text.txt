@@ -1,0 +1,13 @@
+            tommyGun.helth-=10;
+            cube.bullets.splice(i,1);
+
+        if(cube.position.z<=tommyGun.position.z)
+        {
+            cube.shout(1);
+        }else{
+            cube.shout(-1);
+        }
+
+
+
+        enamy.shout(new THREE.Vector3(-enamy.position.x+tommyGun.position.x,-enamy.position.y+tommyGun.position.y,-enamy.position.z+tommyGun.position.z));

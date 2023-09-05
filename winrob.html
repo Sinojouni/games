@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="win.css">
+    <title>gameover</title>
+</head>
+<body>
+    <div id="holder">
+        <div id="over">Game over</div>
+        <div id="holscore">
+            <div id="text">your score is :</div>
+            <div id="score"></div>
+        </div>
+        <div id="button">
+            <a id="main" href="index.html"> main</a>
+            <a id="replay" href="robot.html"> replay</a>
+        </div>
+    </div>
+    <script>
+        const score=document.getElementById('score');
+        const names=window.location.search;
+        const urlparams=new URLSearchParams(names);
+        score.innerHTML=urlparams.get('score');
+    </script>
+</body>
+</html>

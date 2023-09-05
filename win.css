@@ -1,0 +1,58 @@
+body{
+    margin: 0%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(17, 28, 52);
+}
+#holder{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: rgba(30, 46, 81, 0.642);
+}
+#over{
+    margin: 2vw;
+    color: white;
+    font-size: 3vw;
+    text-align: center;
+    padding: 1vw;
+}
+#text{
+    margin-top: 2vw;
+    margin-bottom: 2vw;
+    color: white;
+    font-size: 2vw;
+    text-align: center;
+    padding: 1vw;
+}
+#score{
+    margin-top: 2vw;
+    margin-bottom: 2vw;
+    color: white;
+    font-size: 2vw;
+    text-align: center;
+}
+a{
+    text-decoration: none;
+    color: white;
+    font-size: 2vw;
+    background-color: chartreuse;
+    margin: 2vw;
+    padding: 2vw;
+    width: 10vw;
+    text-align: center;
+}
+#button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}
+#holscore{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}

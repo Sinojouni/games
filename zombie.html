@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Examples - First Person Shooter Game Tommy Gun Starter Code</title>
+
+    <style>
+        @font-face {
+            font-family: 'Robus-BWqOd';
+            src: url('https://www.shanebrumback.com/fonts/Robus-BWqOd.otf') format('opentype');
+        }
+
+        body {
+            margin: 0;
+            background-color: black;
+        }
+
+        #health {
+            position: absolute;
+            bottom: 0vw;
+            left: 0vw;
+            height: 4vw;
+            width: 10vw;
+            padding-left: 1vw;
+            color: beige;
+            font-size: 3vw;
+        }
+
+        #bull {
+            position: absolute;
+            bottom: 10%;
+            left: 0vw;
+            height: 4vw;
+            width: 10vw;
+            padding-left: 1vw;
+            color: beige;
+            font-size: 3vw;
+        }
+
+        #score {
+            position: absolute;
+            top: 0vw;
+            left: 47vw;
+            height: 4vw;
+            width: 6vw;
+            padding-left: 1.5vw;
+            color: beige;
+            font-size: 3vw;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #blocker {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        #instructions {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+        }
+
+        #crosshair {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            display: none;
+            /* Hide the crosshair by default */
+        }
+
+        #playButton {
+            font-family: 'Robus-BWqOd';
+            font-size: 5vw;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.75);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+        }
+
+        p {
+            font-family: Arial;
+            font-size: medium;
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+
+            /* Styles for mobile devices with a maximum width of 767px */
+            #playButton {
+                font-family: 'Robus-BWqOd';
+                font-size: 15vw;
+                /* Adjust the font size as per your preference */
+            }
+
+            p {
+                font-size: 4vw;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="blocker">
+        <div id="instructions">
+            <div id="playButton">
+                Play Now
+                <p>
+                    ESC - Menu
+                    <br />
+                    WASF ARROWS - Move
+                    <br />
+                    LEFT MOUSE - Fire
+
+                    <div id="message">pleas wait til map lod</div>
+
+                </p>
+            </div>
+        </div>
+    </div>
+    <div id="health"></div>
+    <div id="bull">x</div>
+    <div id="score"></div>
+    <img id="crosshair" src="reticle.png" alt="Crosshair">
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.156.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.156.0/examples/jsm/"
+                }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .1, 1000);
+        camera.position.set(0, 1, 0);
+
+
+        camera.near = .015;
+        camera.updateProjectionMatrix();
+
+
+        var tommyGun;
+
+        var gun;
+
+        var raycaster = new THREE.Raycaster();
+        var mess=document.getElementById('message');
+        var lod = false;
+        const lodingmanager = new THREE.LoadingManager();
+
+        lodingmanager.onLoad = function () {
+            lod = true;
+            mess.style.display = "none";
+        };
+
+        var renderer = new THREE.WebGLRenderer({
+            alpha: true,
+            antialias: true
+        });
+
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth - 1, window.innerHeight - 1);
+        document.body.appendChild(renderer.domElement);
+
+
+        var moveForward = false;
+        var moveBackward = false;
+        var moveLeft = false;
+        var moveRight = false;
+
+
+        var controls = new PointerLockControls(camera, document.body);
+
+
+        class plan extends THREE.Mesh {
+            constructor(width, hight, depth, color, { x, y, z }) {
+                super(
+                    new THREE.BoxGeometry(width, hight, depth),
+                    new THREE.MeshStandardMaterial({ color: color })
+                )
+                this.hight = hight;
+                this.width = width;
+                this.depth = depth;
+                this.position.set(x, y, z);
+                this.buttom = this.position.y - (this.hight / 2);
+                this.top = this.position.y + (this.hight / 2);
+                this.left = this.position.x - (this.width / 2);
+                this.right = this.position.x + (this.width / 2);
+                this.front = this.position.z + (this.depth / 2);
+                this.back = this.position.z - (this.depth / 2);
+            }
+        }
+
+
+        class bullet extends THREE.Mesh {
+            constructor(width, hight, depth, color, { x, y, z }) {
+                super(
+                    new THREE.BoxGeometry(width, hight, depth),
+                    new THREE.MeshStandardMaterial({ color: color })
+                )
+                this.hight = hight;
+                this.width = width;
+                this.depth = depth;
+                this.position.set(x, y, z);
+                this.buttom = this.position.y - (this.hight / 2);
+                this.top = this.position.y + (this.hight / 2);
+                this.left = this.position.x - (this.width / 2);
+                this.right = this.position.x + (this.width / 2);
+                this.front = this.position.z + (this.depth / 2);
+                this.back = this.position.z - (this.depth / 2);
+            }
+            setside() {
+                this.buttom = this.position.y - (this.hight / 2);
+                this.top = this.position.y + (this.hight / 2);
+
+                this.left = this.position.x - (this.width / 2);
+                this.right = this.position.x + (this.width / 2);
+
+                this.front = this.position.z + (this.depth / 2);
+                this.back = this.position.z - (this.depth / 2);
+            }
+            update() {
+                this.setside();
+
+                this.position.addScaledVector(this.direction, .6);
+            }
+        }
+
+
+        class box extends THREE.Mesh {
+            constructor(width, hight, depth, color, { x, y, z }, { vx, vy, vz }, isenamy, helth, iswolk) {
+                super(
+                    new THREE.BoxGeometry(width, hight, depth),
+                    new THREE.MeshStandardMaterial({ color: color })
+                )
+                this.hight = hight;
+                this.width = width;
+                this.depth = depth;
+                this.position.set(x, y, z);
+                this.vx = vx;
+                this.vy = vy;
+                this.vz = vz;
+                this.buttom = this.position.y - (this.hight / 2);
+                this.top = this.position.y + (this.hight / 2);
+                this.left = this.position.x - (this.width / 2);
+                this.right = this.position.x + (this.width / 2);
+                this.front = this.position.z + (this.depth / 2);
+                this.back = this.position.z - (this.depth / 2);
+                this.isenamy = isenamy;
+                this.helth = helth;
+                this.bullets = [];
+                this.iswolk = iswolk;
+                this.isdead = false;
+            }
+            setside() {
+                this.buttom = this.position.y - (this.hight / 2);
+                this.top = this.position.y + (this.hight / 2);
+
+                this.left = this.position.x - (this.width / 2);
+                this.right = this.position.x + (this.width / 2);
+
+                this.front = this.position.z + (this.depth / 2);
+                this.back = this.position.z - (this.depth / 2);
+            }
+            shout(direction) {
+                const bul = new bullet(0.1, 0.1, 0.1, 0xffffff, { x: this.position.x, y: this.position.y, z: this.position.z });
+                bul.direction = direction.clone().normalize();
+                scene.add(bul);
+                this.bullets.push(bul);
+            }
+            wlak(dir) {
+                if (this.iswolk == true) {
+                    this.position.addScaledVector(dir.clone().normalize(), 0.07);
+                }
+            }
+            update(plan) {
+                this.setside();
+
+                this.vy += -0.01;
+                if (detectcolision(this, plan)) {
+                    this.vy *= 0.3;
+                    this.vy *= -1;
+                } else {
+                    this.position.y += this.vy;
+                }
+                if (this.helth == 0) {
+                    this.isdead = true;
+                }
+            }
+        }
+
+        function detectcolision(box1, box2) {
+            const xcol = box1.right >= box2.left && box1.left <= box2.right;
+            const ycol = box1.top >= box2.buttom && box1.buttom + box1.vy <= box2.top;
+            const zcol = box1.front >= box2.back && box1.back <= box2.front;
+            return xcol && ycol && zcol;
+        }
+
+
+
+        tommyGun = new box(1, 2, 1, 0x00ffff, { x: 0, y: 1.5, z: 0 }, { vx: 0, vy: 0, vz: 0 }, false, 100, false)
+
+
+        const ground = new plan(50, -0.1, 50, 0x0000ff, { x: 0, y: 0, z: 0 });
+
+
+        const wolk = [];
+
+
+        var gridHelper = new THREE.GridHelper(50, 50);
+
+
+        var blocker = document.getElementById('blocker');
+        var instructions = document.getElementById('instructions');
+        var playButton = document.getElementById('playButton');
+
+        playButton.addEventListener('click', function () {
+            if (lod) {
+                controls.lock();
+            }
+        });
+
+        controls.addEventListener('lock', function () {
+            instructions.style.display = 'none';
+            blocker.style.display = 'none';
+            document.getElementById('crosshair').style.display = 'block';
+        });
+
+        controls.addEventListener('unlock', function () {
+            blocker.style.display = 'block';
+            instructions.style.display = '';
+            document.getElementById('crosshair').style.display = 'none';
+        });
+
+
+        window.addEventListener('resize', function () {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        scene.add(controls.getObject());
+
+        var ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+
+
+        var onKeyDown = function (event) {
+            switch (event.keyCode) {
+                case 38:
+                case 87:
+                    moveForward = true;
+                    break;
+                case 37:
+                case 65:
+                    moveLeft = true;
+                    break;
+                case 40:
+                case 83:
+                    moveBackward = true;
+                    break;
+                case 39:
+                case 68:
+                    moveRight = true;
+                    break;
+
+            }
+        };
+
+        document.addEventListener('mousedown', (event) => {
+            if (controls.isLocked) {
+                if (event.button == 0) {
+                    if (bullcount > 0) {
+                        tommyGun.shout(raycaster.ray.direction.clone());
+                        bullcount--;
+                        bul.innerHTML = '🔫' + bullcount;
+                    }
+                }
+            }
+        });
+
+        var onKeyUp = function (event) {
+            switch (event.keyCode) {
+                case 38:
+                case 87:
+                    moveForward = false;
+                    break;
+                case 37:
+                case 65:
+                    moveLeft = false;
+                    break;
+                case 40:
+                case 83:
+                    moveBackward = false;
+                    break;
+                case 39:
+                case 68:
+                    moveRight = false;
+                    break;
+            }
+        };
+
+        document.addEventListener('keydown', onKeyDown);
+        document.addEventListener('keyup', onKeyUp);
+
+
+        function onMouseMove(event) {
+            event.preventDefault();
+            const imageElement = document.getElementById('crosshair');
+
+            const imageRect = imageElement.getBoundingClientRect();
+            const imageCenterX = imageRect.left + imageRect.width / 2;
+            const imageCenterY = imageRect.top + imageRect.height / 2;
+
+            const mouse = new THREE.Vector2();
+            mouse.x = (imageCenterX / window.innerWidth) * 2 - 1;
+            mouse.y = -(imageCenterY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+
+        }
+        document.addEventListener('mousemove', onMouseMove, false);
+
+        function checkCollision(position) {
+            var gridSize = 50;
+            var halfGridSize = gridSize / 2;
+            var margin = 0.1;
+
+            if (
+                position.x < -halfGridSize + margin ||
+                position.x > halfGridSize - margin ||
+                position.z < -halfGridSize + margin ||
+                position.z > halfGridSize - margin
+            ) {
+                return true;
+            }
+
+            return false;
+        }
+        var fram = 1;
+        var rateval = 100;
+        var rate = rateval;
+        var score = 0;
+        var zombie = [];
+        var bullcount = 100;
+        var helth = [];
+        var bull = [];
+
+        var loader = new GLTFLoader(lodingmanager);
+        loader.load('battle_rifle_animated.glb', function (gltf) {
+            gltf.scene.scale.set(0.003, 0.003, 0.003)
+
+            gltf.scene.position.set(camera.position.x, camera.position.y, camera.position.z);
+            gun = gltf.scene
+            scene.add(gltf.scene)
+
+            var tommyGunLight = new THREE.PointLight(0xffffff, 0.1);
+            tommyGunLight.position.set(0.025, -0.15, 0.025);
+            gun.add(tommyGunLight);
+
+        });
+
+        var abandonedBuilding;
+
+        loader.load(
+            'low_poly_abandoned_brick_room.glb',
+            function (gltf) {
+                gltf.scene.scale.set(5.2, 4, 5.15)
+                abandonedBuilding = gltf.scene;
+                abandonedBuilding.position.y = -0.05;
+                abandonedBuilding.position.z = +2.2;
+                scene.add(abandonedBuilding);
+            });
+
+
+
+        loader.load('zombie_monster_slasher_necromorph.glb', function (gltf) {
+        });
+
+        var loader1 = new GLTFLoader(lodingmanager);
+        loader1.load('zombie_bind_hunter.glb',function (gltf) {
+        })
+
+        const life = document.getElementById('health');
+        life.innerHTML = '❤️' + tommyGun.helth;
+        const soc = document.getElementById('score');
+        soc.innerHTML = score;
+        const bul = document.getElementById('bull');
+        bul.innerHTML = '🔫' + bullcount;
+        function animate() {
+            requestAnimationFrame(animate);
+            if (controls.isLocked) {
+                var acceleration = 0.003;
+                var maxSpeed = 0.10;
+                if (moveForward) {
+                    controls.speed = Math.min(controls.speed + acceleration, maxSpeed);
+                    controls.moveForward(controls.speed);
+                    if (checkCollision(controls.getObject().position)) {
+                        controls.moveForward(-controls.speed);
+                    }
+                } else if (moveBackward) {
+                    controls.speed = Math.min(controls.speed + acceleration, maxSpeed);
+                    controls.moveForward(-controls.speed);
+                    if (checkCollision(controls.getObject().position)) {
+                        controls.moveForward(controls.speed);
+                    }
+                } else if (moveLeft) {
+                    controls.speed = Math.min(controls.speed + acceleration, maxSpeed);
+                    controls.moveRight(-controls.speed);
+                    if (checkCollision(controls.getObject().position)) {
+                        controls.moveRight(controls.speed);
+                    }
+                } else if (moveRight) {
+                    controls.speed = Math.min(controls.speed + acceleration, maxSpeed);
+                    controls.moveRight(controls.speed);
+                    if (checkCollision(controls.getObject().position)) {
+                        controls.moveRight(-controls.speed);
+                    }
+                } else {
+                    controls.speed = 0;
+                }
+                if (tommyGun.helth <= 0) {
+                    gameover();
+                }
+                if (fram % (rate * 2) == 0) {
+                    if (rate > (rateval / 6)) {
+                        rate -= 1;
+                    }
+                    if (wolk.length < 50) {
+                        const wol = new box(1, 2, 1, 0x00ff00, { x: random(-24, 24), y: 5, z: random(-24, 24) }, { vx: 0, vy: 0, vz: 0 }, true, 30, true);
+                        wolk.push(wol);
+
+                        var zom;
+                        loader.load('zombie_monster_slasher_necromorph.glb', function (gltf) {
+                            gltf.scene.scale.set(1, 1, 1)
+
+                            gltf.scene.position.set(wol.position.x, wol.buttom, wol.position.z);
+                            zom = gltf.scene;
+                            scene.add(gltf.scene);
+                            zombie.push(zom);
+                        });
+                    }
+
+                }
+                if (fram % (rate * 21) == 0) {
+                    if (helth.length < 4) {
+                        const blood = new box(0.5, 0.3, 0.5, 0xff0000, { x: random(-24, 24), y: 5, z: random(-24, 24) }, { vx: 0, vy: 0, vz: 0 }, false, 30, false);
+                        helth.push(blood);
+                        scene.add(blood);
+                    }
+                }
+                if (fram % (rate * 15) == 0) {
+                    if (bull.length < 4) {
+                        const adbull = new box(0.5, 0.3, 0.5, 0xffff00, { x: random(-24, 24), y: 5, z: random(-24, 24) }, { vx: 0, vy: 0, vz: 0 }, false, 30, false);
+                        bull.push(adbull);
+                        scene.add(adbull);
+                    }
+                }
+                if (fram % (rate * 11) == 0) {
+                    if (wolk.length < 50) {
+                        const wol = new box(2.5, 2.5, 2, 0x00ff00, { x: random(-24, 24), y: 5, z: random(-24, 24) }, { vx: 0, vy: 0, vz: 0 }, true, 150, true);
+                        wolk.push(wol);
+
+                        var zom;
+                        loader1.load('zombie_bind_hunter.glb', function (gltf) {
+                            gltf.scene.scale.set(1, 1, 1)
+
+                            gltf.scene.position.set(wol.position.x, wol.buttom, wol.position.z);
+                            zom = gltf.scene;
+                            scene.add(gltf.scene);
+                            zombie.push(zom);
+                        });
+                    }
+                }
+                for (let h = 0; h < wolk.length; h++) {
+                    if (wolk[h].isdead) {
+                        score += 1;
+                        soc.innerHTML = score;
+                        wolk.splice(h, 1);
+                        scene.remove(zombie[h]);
+                        zombie.splice(h, 1);
+                    } else {
+                        wolk[h].update(ground);
+                        wolk[h].wlak(new THREE.Vector3(-wolk[h].position.x + tommyGun.position.x, -wolk[h].position.y + tommyGun.position.y, -wolk[h].position.z + tommyGun.position.z))
+                        if (detectcolision(tommyGun, wolk[h])) {
+                            tommyGun.helth -= 0.1;
+                            life.innerHTML = '❤️' + Math.round(tommyGun.helth);
+                        }
+                        if (zombie[h]) {
+                            zombie[h].position.set(wolk[h].position.x, wolk[h].buttom, wolk[h].position.z);
+                            const vec = new THREE.Vector2(-wolk[h].position.x + tommyGun.position.x, -wolk[h].position.z + tommyGun.position.z);
+                            const angl = Math.atan2(vec.y, vec.x);
+                            zombie[h].rotation.y = -angl + (Math.PI / 2);
+
+                        }
+                    }
+                }
+                for (let h = 0; h < helth.length; h++) {
+                    helth[h].update(ground);
+                    if (detectcolision(tommyGun, helth[h])) {
+                        if (tommyGun.helth < 70) {
+                            tommyGun.helth += 30;
+                        } else {
+                            tommyGun.helth = 100;
+                        }
+                        life.innerHTML = '❤️' + Math.round(tommyGun.helth);
+                        scene.remove(helth[h]);
+                        helth.splice(h, 1);
+                    }
+                }
+                for (let h = 0; h < bull.length; h++) {
+                    bull[h].update(ground);
+                    if (detectcolision(tommyGun, bull[h])) {
+                        bullcount += 30;
+                        scene.remove(bull[h]);
+                        bull.splice(h, 1);
+                        bul.innerHTML = '🔫' + bullcount;
+                    }
+                }
+                tommyGun.update(ground);
+                for (let j = 0; j < tommyGun.bullets.length; j++) {
+                    var remove = false;
+                    tommyGun.bullets[j].update();
+                    for (let h = 0; h < wolk.length; h++) {
+                        if (detectcolision(wolk[h], tommyGun.bullets[j])) {
+                            remove = true;
+                            wolk[h].helth -= 10;
+                        }
+                    }
+                    if (checkCollision(tommyGun.bullets[j].position)) {
+                        remove = true;
+                    }
+                    if (remove == true) {
+                        scene.remove(tommyGun.bullets[j])
+                        tommyGun.bullets.splice(j, 1);
+                    }
+                }
+                fram++;
+            }
+
+            tommyGun.position.copy(camera.position);
+            tommyGun.rotation.copy(camera.rotation);
+
+            if (gun) {
+                gun.position.copy(camera.position);
+                gun.rotation.copy(camera.rotation);
+                gun.updateMatrix();
+                gun.translateY(-0.05);
+                gun.translateX(+0.05);
+                gun.translateZ(-0.1);
+                gun.rotateY(1 * Math.PI);
+
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
+
+
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function gameover() {
+            const url = 'winzom.html';
+            window.location.href = `${url}?score=${score}`;
+        }
+    </script>
+
+</body>
+
+</html>
