@@ -1,0 +1,40 @@
+export default class placement {
+    constructor(position)
+    {
+        this.x=position.x;
+        this.y=position.y;
+        this.siz=64;
+        this.color='rgba(255,255,255,0.1)';
+        this.colid=false;
+        this.isfree=true;
+        this.isindex=false;
+    }
+    drow(canvas){
+        canvas.fillStyle=this.color;
+        canvas.fillRect(this.x,this.y,this.siz,this.siz);
+        if(this.colid && this.isfree==false || this.isindex && this.colid)
+        {
+            this.range(canvas)
+        }
+    }
+    update(canvas,mouse)
+    {
+        this.drow(canvas)
+        if(mouse.x>this.x && mouse.x<this.x+this.siz && mouse.y>this.y && mouse.y<this.y+this.siz)
+        {
+            this.color='white';
+            this.colid=true;
+        }
+        else{
+            this.color='rgba(255,255,255,0.1)';
+            this.colid=false;
+        }
+    }
+    range(canvas)
+    {
+        canvas.beginPath();
+        canvas.fillStyle='rgba(255,00,00,0.1)';
+        canvas.arc(this.x+this.siz,this.y+this.siz/2,250,0,Math.PI*2);
+        canvas.fill();
+    }
+}
