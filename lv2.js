@@ -73,6 +73,32 @@ const plac=[14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0
     const proj=['./projectile.png','./projectile2.png','./projectile3.png','./projectile4.png'];
     const pic=['./untitled1.png','./untitled2.png','./untitled3.png','./untitled4.png','./untitled5.png'];
     const p=['./p2.png','./p3.png','./p4.png','./p5.png'];
+
+
+
+    const picimg=[];
+    const pimg=[];
+    
+    for(let i=0 ;i<pic.length;i++)
+    {
+        let imgp=new Image();
+        imgp.src=pic[i];
+        picimg.push(imgp);
+    }
+    
+    for(let i=0 ;i<p.length;i++)
+    {
+        let imgp=new Image();
+        imgp.src=p[i];
+        pimg.push(imgp);
+    }
+    
+    let img2=new Image();
+    img2.src='./p1.png';
+
+
+
+
     const ind={tower:towers,projec:proj};
     const damage=[20,30,40,50];
     var index=null;
@@ -172,6 +198,7 @@ const plac=[14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0
             can.drawImage(img,0,0)
             if(life==0){
                 gameover();
+                window.cancelAnimationFrame();
             }
             for(let i=0;i<enm.length;i++)
             {
@@ -314,18 +341,12 @@ const plac=[14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0, 14, 0
     {
         can.fillStyle='black'
         can.fillRect(1280,0,202,768);
-        let img=new Image();
-        img.src=pic[picindex];
-        can.drawImage(img,1280,0)
+        can.drawImage(picimg[picindex],1280,0)
         if(index==null)
         {
-            let img2=new Image();
-            img2.src='./p1.png';
             can.drawImage(img2,1280,0);
         }else{
-            let img2=new Image();
-            img2.src=p[index];
-            can.drawImage(img2,1280,0);
+            can.drawImage(pimg[index],1280,0);
         }
     }
     wavebut.addEventListener('click',()=>{

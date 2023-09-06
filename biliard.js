@@ -184,12 +184,6 @@ function move(time){
                     }
                 }
 
-                if(enterballs.length==0 || fol==true)
-                {
-                    playerone.turn=!playerone.turn;
-                    playertwo.turn=!playertwo.turn;
-                }
-
 
                 if(enterballs.length!=0 && firstshot==true)
                 {
@@ -205,6 +199,8 @@ function move(time){
                         }
                     }
                 }
+
+
                 if(enterballs.length!=0 && undf==false)
                 {
                     let count=0;
@@ -278,6 +274,7 @@ function move(time){
                         }
                     }
                 }
+
                 if(enterballs.length!=0 && firstshot==false && undf==true)
                 {
                     if(playerone.turn==true)
@@ -353,6 +350,11 @@ function move(time){
                         }
                     }
                     undf=false;
+                }
+                if(enterballs.length==0 || fol==true)
+                {
+                    playerone.turn=!playerone.turn;
+                    playertwo.turn=!playertwo.turn;
                 }
                 mystic.apear();
                 myaim.balls=[];

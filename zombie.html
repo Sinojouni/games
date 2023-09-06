@@ -80,7 +80,7 @@
             /* Hide the crosshair by default */
         }
 
-        #playButton {
+        #playButton,#over {
             font-family: 'Robus-BWqOd';
             font-size: 5vw;
             color: white;
@@ -90,6 +90,9 @@
             left: 50%;
             transform: translate(-50%, -50%);
             white-space: nowrap;
+        }
+        #over{
+            display: none;
         }
 
         p {
@@ -131,6 +134,7 @@
                 </p>
             </div>
         </div>
+        <div id="over">Game Over please wait</div>
     </div>
     <div id="health"></div>
     <div id="bull">x</div>
@@ -165,6 +169,7 @@
 
         var raycaster = new THREE.Raycaster();
         var mess=document.getElementById('message');
+        var over=document.getElementById('over');
         var lod = false;
         const lodingmanager = new THREE.LoadingManager();
 
@@ -541,6 +546,7 @@
                 }
                 if (tommyGun.helth <= 0) {
                     gameover();
+                    window.cancelAnimationFrame();
                 }
                 if (fram % (rate * 2) == 0) {
                     if (rate > (rateval / 6)) {
@@ -681,6 +687,10 @@
         }
 
         function gameover() {
+            over.style.display = "block";
+            blocker.style.display = 'block';
+            instructions.style.display = 'none';
+            document.getElementById('crosshair').style.display = 'none';
             const url = 'winzom.html';
             window.location.href = `${url}?score=${score}`;
         }

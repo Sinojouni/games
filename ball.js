@@ -223,6 +223,12 @@ export default class ball {
     disaper()
     {
         this.ball.style.display="none";
+        this.ball.style.top=0+'%';
+        this.ball.style.left=0+'%';
+        this.ball.style.display="block";
+        this.ball_rec=this.ball.getBoundingClientRect();
+        this.x=this.ball_rec.left+this.r-this.box.left;
+        this.y=this.ball_rec.top+this.r-this.box.top;
     }
     apear(){
         this.ball.style.top=49+'%';

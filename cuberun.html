@@ -227,10 +227,12 @@
                 enamys[i].update(plan);
                 if (detectcolision(cube, enamys[i])) {
                     gameover();
+                    window.cancelAnimationFrame();
                 }
             }
             if (!detectfall(cube, plan)) {
                 gameover();
+                window.cancelAnimationFrame();
             }
             score.innerHTML = fram;
 

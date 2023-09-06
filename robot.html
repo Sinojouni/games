@@ -80,7 +80,7 @@
             /* Hide the crosshair by default */
         }
 
-        #playButton {
+        #playButton,#over {
             font-family: 'Robus-BWqOd';
             font-size: 5vw;
             color: white;
@@ -90,6 +90,9 @@
             left: 50%;
             transform: translate(-50%, -50%);
             white-space: nowrap;
+        }
+        #over{
+            display: none;
         }
 
         p {
@@ -131,6 +134,7 @@
                 </p>
             </div>
         </div>
+        <div id="over">Game Over please wait</div>
     </div>
     <div id="health"></div>
     <div id="bull">x</div>
@@ -155,6 +159,7 @@
         camera.position.set(0, 1, 0);
 
         var mess = document.getElementById('message');
+        var over=document.getElementById('over');
 
 
 
@@ -556,6 +561,7 @@
                 }
                 if (tommyGun.helth <= 0) {
                     gameover();
+                    window.cancelAnimationFrame();
                 }
                 if (fram % (rate * 4) == 0) {
                     if (rate > rateval / 5) {
@@ -828,6 +834,10 @@
             return Math.random() * (max - min) + min;
         }
         function gameover() {
+            over.style.display = "block";
+            blocker.style.display = 'block';
+            instructions.style.display = 'none';
+            document.getElementById('crosshair').style.display = 'none';
             const url = 'winrob.html';
             window.location.href = `${url}?score=${score}`;
         }
